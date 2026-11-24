@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔬 Всемирный день науки — интерактивные задания</title>
+<style>
+  :root{
+    --good:#37d67a;
+    --bad:#ff6b6b;
+    --gold:#ffd166;
+    --violet:#c39bff;
+    --cyan:#7ce7ff;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; min-height:100vh; padding:22px 16px 70px;
+    font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;
+    color:#f4f2ff;
+    background:
+      radial-gradient(1100px 560px at 8% -10%, #0f5e57 0%, transparent 62%),
+      radial-gradient(900px 500px at 100% 0%, #1d6a8a 0%, transparent 55%),
+      linear-gradient(180deg, #0a2a2a 0%, #071718 100%);
+    background-attachment:fixed;
+    overflow-x:hidden;
+  }
+  .screen{display:none;}
+  .screen.active{display:block; animation:fade .5s ease;}
+  @keyframes fade{from{opacity:0;} to{opacity:1;}}
+
+  /* ================= ТИТУЛЬНЫЙ ЛИСТ ================= */
+  #titleScreen{
+    min-height:100vh;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:24px 16px;
+  }
+  #titleScreen.active{display:flex;}
+
+  .floating-icons{
+    position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0;
+  }
+  .floating-icons span{
+    position:absolute;
+    font-size:clamp(22px, 3vw, 42px);
+    opacity:.18;
+    animation:float 12s ease-in-out infinite;
+    filter:drop-shadow(0 0 12px rgba(255,255,255,.25));
+  }
+  .floating-icons span:nth-child(1){ left:8%;  top:12%; animation-delay:0s; }
+  .floating-icons span:nth-child(2){ left:82%; top:18%; animation-delay:-2s; }
+  .floating-icons span:nth-child(3){ left:16%; top:74%; animation-delay:-4s; }
+  .floating-icons span:nth-child(4){ left:72%; top:68%; animation-delay:-1s; }
+  .floating-icons span:nth-child(5){ left:48%; top:8%;  animation-delay:-3s; }
+  .floating-icons span:nth-child(6){ left:88%; top:48%; animation-delay:-5s; }
+  .floating-icons span:nth-child(7){ left:4%;  top:48%; animation-delay:-6s; }
+  .floating-icons span:nth-child(8){ left:58%; top:84%; animation-delay:-7s; }
+
+  @keyframes float{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-18px) rotate(8deg); }
+  }
+
+  .cover{
+    position:relative; z-index:1;
+    width:min(780px, 100%);
+    text-align:center;
+    padding:42px 28px 34px;
+    border-radius:32px;
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.15);
+    backdrop-filter:blur(10px);
+    box-shadow:0 30px 80px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.15);
+    animation:appear .8s ease both;
+  }
+  @keyframes appear{
+    from{ opacity:0; transform:translateY(24px) scale(.98); }
+    to{ opacity:1; transform:none; }
+  }
+
+  .date-badge{
+    display:inline-block;
+    padding:7px 18px; border-radius:999px;
+    background:rgba(255,209,102,.16);
+    border:1px solid rgba(255,209,102,.55);
+    color:var(--gold); font-weight:700; letter-spacing:2px;
+    font-size:13px; text-transform:uppercase; margin-bottom:18px;
+  }
+
+  .logo{
+    font-size:clamp(52px, 10vw, 86px);
+    line-height:1; margin-bottom:10px;
+    animation:pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ transform:scale(1); filter:drop-shadow(0 0 18px rgba(124,231,255,.25)); }
+    50%{ transform:scale(1.06); filter:drop-shadow(0 0 28px rgba(255,209,102,.45)); }
+  }
+
+  .cover h1{
+    margin:0 0 10px;
+    font-size:clamp(30px, 6vw, 54px);
+    line-height:1.1; letter-spacing:.5px;
+    background:linear-gradient(90deg, var(--gold), var(--cyan), var(--violet));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+
+  .subtitle{
+    margin:0 auto 22px; max-width:560px;
+    font-size:clamp(16px, 2.4vw, 19px);
+    line-height:1.5; color:#c8c3ea;
+  }
+
+  .features{
+    display:grid; grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:10px; max-width:560px; margin:0 auto 28px; text-align:left;
+  }
+  .feature{
+    display:flex; align-items:center; gap:10px;
+    padding:11px 14px; border-radius:14px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    font-size:15px; color:#e7e3ff;
+  }
+  .feature-emoji{font-size:20px; flex:0 0 auto;}
+
+  .start-btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    min-width:260px; padding:17px 34px; border-radius:18px; border:none;
+    cursor:pointer; text-decoration:none; font-family:inherit;
+    font-size:19px; font-weight:800; color:#2b1b00;
+    background:linear-gradient(135deg,#ffd166,#ff9a5c);
+    box-shadow:0 14px 34px rgba(255,170,70,.38);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .start-btn:hover{ transform:translateY(-3px) scale(1.02); box-shadow:0 20px 42px rgba(255,170,70,.5); }
+  .start-btn:active{ transform:translateY(0) scale(.99); }
+
+  .small-note{margin:18px 0 0; font-size:13px; color:#9b95c4;}
+
+  /* ================= ИГРА ================= */
+  #gameScreen{padding-top:10px;}
+
+  header{max-width:900px;margin:0 auto;text-align:center;}
+  .badge{
+    display:inline-block; padding:6px 16px; border-radius:999px;
+    background:rgba(255,209,102,.16); border:1px solid rgba(255,209,102,.5);
+    color:var(--gold); font-weight:700; letter-spacing:1px; font-size:13px;
+  }
+  header h1{
+    font-size:clamp(26px,5vw,44px); margin:10px 0 6px; line-height:1.15;
+    background:linear-gradient(90deg,#ffd166,#7ce7ff,#c39bff);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .sub{margin:0 0 16px; color:#b9b3e0; font-size:16px;}
+  .progress-wrap{
+    display:flex; align-items:center; gap:14px; max-width:620px; margin:0 auto;
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+    padding:10px 16px; border-radius:999px;
+  }
+  .progress{flex:1; height:14px; background:rgba(255,255,255,.12); border-radius:999px; overflow:hidden;}
+  #progressBar{height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,#ffd166,#7cf1a5); transition:width .45s ease;}
+  .score{font-weight:800; white-space:nowrap; font-size:16px;}
+  #score{display:inline-block; color:var(--gold);}
+  #score.pop{animation:pop .4s;}
+  @keyframes pop{50%{transform:scale(1.45);}}
+
+  .tabs{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:22px 0 18px;}
+  .tab{
+    border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.07);
+    color:#e9e6ff; padding:10px 16px; border-radius:999px; cursor:pointer;
+    font-size:15px; font-weight:600; font-family:inherit; transition:.2s;
+  }
+  .tab:hover{background:rgba(255,255,255,.16); transform:translateY(-2px);}
+  .tab.active{
+    background:linear-gradient(135deg,#ffd166,#ff9a5c); color:#2b1b00;
+    border-color:transparent; box-shadow:0 8px 22px rgba(255,180,80,.35);
+  }
+
+  .panel{
+    display:none; max-width:900px; margin:0 auto; padding:24px;
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+    border-radius:24px; backdrop-filter:blur(6px);
+  }
+  .panel.active{display:block; animation:fade .35s ease;}
+  .panel h2{font-size:clamp(19px,3vw,24px); margin:0 0 6px;}
+  .hint{color:#b9b3e0; font-size:15px; margin:0 0 16px;}
+
+  .btn{
+    font-family:inherit; font-size:16px; font-weight:700; cursor:pointer;
+    padding:12px 26px; border-radius:14px; border:none; color:#2b1b00;
+    background:linear-gradient(135deg,#ffd166,#ffb347);
+    transition:.2s; box-shadow:0 8px 20px rgba(255,180,80,.3);
+  }
+  .btn:hover:not(:disabled){transform:translateY(-2px);}
+  .btn:disabled{opacity:.4; cursor:not-allowed; box-shadow:none;}
+  .btn.ghost{background:rgba(255,255,255,.1); color:#fff; box-shadow:none; border:1px solid rgba(255,255,255,.2);}
+
+  .quiz-top{display:flex; justify-content:space-between; font-size:14px; color:#b9b3e0; margin-bottom:12px;}
+  .q-text{font-size:clamp(18px,2.6vw,22px); font-weight:700; margin-bottom:6px;}
+  .option{
+    display:block; width:100%; text-align:left; padding:14px 18px; margin:10px 0;
+    border-radius:16px; border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.08); color:#fff; font-size:17px;
+    font-family:inherit; cursor:pointer; transition:.18s;
+  }
+  .option:hover:not(:disabled){background:rgba(255,255,255,.18); transform:translateX(5px);}
+  .option.correct{background:linear-gradient(90deg,#1f9d55,#37d67a); border-color:transparent;}
+  .option.wrong{background:linear-gradient(90deg,#b3392f,#e05a4f); border-color:transparent;}
+  .option:disabled{cursor:default;}
+  .feedback{min-height:24px; margin:12px 0; font-size:15px; line-height:1.45;}
+  .feedback.good{color:#8bf0b3;}
+  .feedback.bad{color:#ffb3ad;}
+
+  .memory-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:16px 0;}
+  .mem-card{position:relative; aspect-ratio:1/1; padding:0; border:none; background:none; cursor:pointer; perspective:800px;}
+  .mem-inner{position:absolute; inset:0; transform-style:preserve-3d; transition:transform .45s;}
+  .mem-card.flipped .mem-inner, .mem-card.matched .mem-inner{transform:rotateY(180deg);}
+  .face{position:absolute; inset:0; display:grid; place-items:center; border-radius:16px; backface-visibility:hidden; font-size:34px;}
+  .front{background:linear-gradient(135deg,#5b3fd6,#2b7bd6); color:#fff; font-weight:800;}
+  .back{background:#fff8e7; transform:rotateY(180deg);}
+  .mem-card.matched .back{background:#d8ffe9; box-shadow:inset 0 0 0 3px var(--good);}
+  .mem-card.matched{cursor:default;}
+
+  .pool{
+    display:flex; flex-wrap:wrap; gap:10px; min-height:78px; padding:12px;
+    border-radius:18px; background:rgba(0,0,0,.2); border:1px dashed rgba(255,255,255,.2);
+  }
+  .chip{
+    display:flex; align-items:center; gap:8px; padding:10px 15px; border-radius:999px;
+    border:1px solid rgba(255,255,255,.2); background:rgba(255,255,255,.1);
+    color:#fff; font-size:16px; font-family:inherit; cursor:pointer; transition:.18s;
+  }
+  .chip:hover{transform:translateY(-2px); background:rgba(255,255,255,.18);}
+  .chip.selected{background:linear-gradient(135deg,#ffd166,#ff9a5c); color:#2b1b00; box-shadow:0 0 0 3px rgba(255,209,102,.35);}
+  .chip-emoji{font-size:22px;}
+  .bins{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px;}
+  .bin{
+    border-radius:18px; padding:14px; min-height:150px; cursor:pointer; transition:.2s;
+    border:2px dashed rgba(255,255,255,.25); background:rgba(255,255,255,.05);
+  }
+  .bin[data-bin="alive"]:hover{background:rgba(55,214,122,.12); border-color:var(--good);}
+  .bin[data-bin="notalive"]:hover{background:rgba(90,160,255,.12); border-color:#5aa0ff;}
+  .bin-title{font-weight:700; margin-bottom:10px;}
+  .bin-items{display:flex; flex-wrap:wrap; gap:8px;}
+  .bin-items .chip{pointer-events:none; opacity:.95;}
+  .bin-items .chip.placed{border-color:rgba(55,214,122,.7);}
+
+  .flasks{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin:18px 0;}
+  .flask{
+    border:none; border-radius:20px; padding:18px 24px; font-size:17px; font-weight:700;
+    font-family:inherit; color:#fff; cursor:pointer; transition:.2s;
+    box-shadow:0 10px 22px rgba(0,0,0,.35);
+  }
+  .flask[data-color="red"]{background:linear-gradient(160deg,#ff7b6b,#c0392b);}
+  .flask[data-color="yellow"]{background:linear-gradient(160deg,#ffe066,#e0a800); color:#3a2a00;}
+  .flask[data-color="blue"]{background:linear-gradient(160deg,#5aa9ff,#2365b0);}
+  .flask:hover{transform:translateY(-3px);}
+  .flask.picked{outline:4px solid var(--gold); transform:translateY(-6px) scale(1.05);}
+  .mixer{display:flex; flex-direction:column; align-items:center; gap:14px; margin-top:10px;}
+  .beaker{
+    width:120px; height:120px; border-radius:50%; display:grid; place-items:center;
+    font-size:40px; background:rgba(255,255,255,.1);
+    border:3px solid rgba(255,255,255,.35); transition:background .5s ease;
+  }
+  .beaker.glow{animation:glow .8s ease;}
+  @keyframes glow{50%{box-shadow:0 0 40px 10px rgba(255,255,255,.45); transform:scale(1.06);}}
+  .mix-result{text-align:center; font-size:16px; line-height:1.5; max-width:520px;}
+  .mix-result strong{color:var(--gold);}
+
+  .solar{display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin:18px 0;}
+  .planet{
+    background:none; border:none; cursor:pointer; color:#fff; font-family:inherit;
+    display:flex; flex-direction:column; align-items:center; gap:8px; font-size:14px; transition:.2s;
+  }
+  .planet-ball{
+    width:70px; height:70px; border-radius:50%;
+    background:radial-gradient(circle at 32% 30%, rgba(255,255,255,.55), transparent 46%), var(--c);
+    box-shadow:0 0 24px -6px var(--c), inset -8px -8px 18px rgba(0,0,0,.45);
+    transition:.2s;
+  }
+  .planet:hover .planet-ball{transform:scale(1.1);}
+  .planet.placed{opacity:.35; pointer-events:none;}
+  .order-list{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; min-height:44px;}
+  .order-chip{
+    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);
+    padding:8px 14px; border-radius:999px; font-size:15px; animation:fade .3s ease;
+  }
+
+  .shake{animation:shake .45s;}
+  @keyframes shake{
+    0%,100%{transform:translateX(0);} 20%{transform:translateX(-7px);}
+    40%{transform:translateX(7px);} 60%{transform:translateX(-5px);} 80%{transform:translateX(5px);}
+  }
+  #toasts{
+    position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
+    display:flex; flex-direction:column; gap:8px; align-items:center; z-index:1000;
+    width:max-content; max-width:92vw;
+  }
+  .toast{
+    background:rgba(20,16,48,.95); border:1px solid rgba(255,255,255,.2);
+    padding:12px 20px; border-radius:14px; font-size:15px; text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,.45); animation:toastIn .3s ease;
+  }
+  .toast.good{border-color:var(--good);}
+  .toast.bad{border-color:var(--bad);}
+  .toast.out{opacity:0; transform:translateY(10px); transition:.4s;}
+  @keyframes toastIn{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;}}
+  .confetti{position:fixed; top:-50px; z-index:999; pointer-events:none; animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(112vh) rotate(720deg); opacity:.15;}}
+
+  .back-link{
+    display:inline-block; margin-top:14px; color:#b9b3e0;
+    text-decoration:none; font-size:14px; border-bottom:1px dashed rgba(255,255,255,.3);
+  }
+  .back-link:hover{color:#fff;}
+
+  @media (max-width:640px){
+    .memory-grid{grid-template-columns:repeat(3,1fr);}
+    .bins{grid-template-columns:1fr;}
+    .panel{padding:16px; border-radius:18px;}
+    .flask{padding:14px 18px; font-size:15px;}
+    .planet-ball{width:58px; height:58px;}
+    .cover{padding:30px 18px 26px; border-radius:24px;}
+    .features{grid-template-columns:1fr;}
+    .start-btn{width:100%; min-width:0;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= ТИТУЛЬНЫЙ ЛИСТ ================= -->
+<section id="titleScreen" class="screen active">
+  <div class="floating-icons" aria-hidden="true">
+    <span>⚛️</span><span>🧪</span><span>🔭</span><span>🧬</span>
+    <span>🪐</span><span>🌡️</span><span>⚗️</span><span>🚀</span>
+  </div>
+
+  <main class="cover">
+    <div class="date-badge">10 ноября • Всемирный день науки</div>
+    <div class="logo" aria-hidden="true">🔬</div>
+    <h1>Всемирный день науки</h1>
+    <p class="subtitle">
+      Интерактивные задания для юных исследователей.
+      Проверь знания, найди пары, смешай цвета и выстрой планеты — собирай звёзды за правильные ответы!
+    </p>
+    <div class="features" aria-label="Задания игры">
+      <div class="feature"><span class="feature-emoji">🧪</span> Викторина о науке</div>
+      <div class="feature"><span class="feature-emoji">🧬</span> Найди научную пару</div>
+      <div class="feature"><span class="feature-emoji">🔬</span> Живое и неживое</div>
+      <div class="feature"><span class="feature-emoji">🎨</span> Лаборатория цвета</div>
+      <div class="feature"><span class="feature-emoji">🚀</span> Планеты по порядку</div>
+      <div class="feature"><span class="feature-emoji">⭐</span> 25 звёзд за успехи</div>
+    </div>
+    <button class="start-btn" id="startBtn" type="button">
+      Начать игру <span aria-hidden="true">→</span>
+    </button>
+    <p class="small-note">
+      Совет: играйте вместе с друзьями или родителями — наука любит команду!
+    </p>
+  </main>
+</section>
+
+<!-- ================= ИГРА ================= -->
+<section id="gameScreen" class="screen">
+  <header>
+    <div class="badge">10 НОЯБРЯ</div>
+    <h1>Всемирный день науки</h1>
+    <p class="sub">Интерактивные задания для юных исследователей 🔬</p>
+    <div class="progress-wrap">
+      <div class="progress"><div id="progressBar"></div></div>
+      <div class="score">⭐ <span id="score">0</span> / <span id="maxScore">25</span></div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-target="quiz">🧪 Викторина</button>
+    <button class="tab" data-target="memory">🧬 Найди пару</button>
+    <button class="tab" data-target="sort">🔬 Живое и неживое</button>
+    <button class="tab" data-target="lab">🎨 Лаборатория цвета</button>
+    <button class="tab" data-target="space">🚀 Планеты</button>
+  </nav>
+
+  <main>
+    <section class="panel active" id="quiz">
+      <h2>Задание 1. Викторина «Наука вокруг нас»</h2>
+      <p class="hint">Выбери правильный ответ — и получи звезду!</p>
+      <div class="quiz-top">
+        <span id="qNum">Вопрос 1 из 6</span>
+        <span id="qScore">⭐ 0</span>
+      </div>
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="qFeedback"></div>
+      <button class="btn" id="nextQ" disabled>Далее →</button>
+    </section>
+
+    <section class="panel" id="memory">
+      <h2>Задание 2. Найди пару</h2>
+      <p class="hint">Открывай карточки и находи одинаковые научные инструменты. Найдено пар:
+        <strong><span id="pairsFound">0</span> / 6</strong></p>
+      <div class="memory-grid" id="memoryGrid"></div>
+      <button class="btn ghost" id="resetMemory">Начать заново 🔄</button>
+    </section>
+
+    <section class="panel" id="sort">
+      <h2>Задание 3. Живая и неживая природа</h2>
+      <p class="hint">Нажми на карточку вверху, а затем на нужную корзину.</p>
+      <div class="pool" id="pool"></div>
+      <div class="bins">
+        <div class="bin" data-bin="alive">
+          <div class="bin-title">🌱 Живая природа</div>
+          <div class="bin-items"></div>
+        </div>
+        <div class="bin" data-bin="notalive">
+          <div class="bin-title">🪨 Неживая природа</div>
+          <div class="bin-items"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="lab">
+      <h2>Задание 4. Лаборатория цвета</h2>
+      <p class="hint">Выбери два разных цвета и узнай, какой цвет получится при смешивании.</p>
+      <div class="flasks">
+        <button class="flask" data-color="red">🔴 Красный</button>
+        <button class="flask" data-color="yellow">🟡 Жёлтый</button>
+        <button class="flask" data-color="blue">🔵 Синий</button>
+      </div>
+      <div class="mixer">
+        <div class="beaker" id="beaker">🧪</div>
+        <div class="mix-result" id="mixResult">Выбери два цвета, чтобы провести опыт</div>
+      </div>
+    </section>
+
+    <section class="panel" id="space">
+      <h2>Задание 5. Планеты по порядку</h2>
+      <p class="hint">Нажимай на планеты в порядке удаления от Солнца — от самой близкой к самой далёкой.</p>
+      <div class="solar" id="solar"></div>
+      <div class="order-list" id="orderList"></div>
+    </section>
+  </main>
+
+  <div style="text-align:center;">
+    <a class="back-link" href="#" id="backToTitle">← Вернуться на титульный лист</a>
+  </div>
+</section>
+
+<div id="toasts"></div>
+
+<script>
+/* ================= ОБЩЕЕ ================= */
+const MAX_STARS = 25;
+let score = 0;
+let celebrated = false;
+let gameInitialized = false;
+
+const scoreEl = document.getElementById('score');
+const barEl   = document.getElementById('progressBar');
+
+function addStar(n = 1){
+  score += n;
+  if(score > MAX_STARS) score = MAX_STARS;
+  scoreEl.textContent = score;
+  barEl.style.width = Math.min(100, score / MAX_STARS * 100) + '%';
+  scoreEl.classList.remove('pop');
+  void scoreEl.offsetWidth;
+  scoreEl.classList.add('pop');
+  if(score >= MAX_STARS) celebrate();
+}
+
+function toast(msg, type){
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type || '');
+  t.textContent = msg;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(()=>{ t.classList.add('out'); setTimeout(()=>t.remove(), 400); }, 2400);
+}
+
+function celebrate(){
+  if(celebrated) return;
+  celebrated = true;
+  toast('🎉 Поздравляем! Все задания выполнены — ты настоящий учёный!', 'good');
+  const emojis = ['⭐','🎉','🔬','🧪','🚀','✨','🧬','🪐'];
+  for(let i = 0; i < 36; i++){
+    const s = document.createElement('div');
+    s.className = 'confetti';
+    s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.fontSize = (16 + Math.random()*22) + 'px';
+    s.style.animationDuration = (2 + Math.random()*2) + 's';
+    s.style.animationDelay = (Math.random()*0.8) + 's';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(), 5200);
+  }
+}
+
+function shuffle(a){
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ================= ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ================= */
+document.getElementById('startBtn').addEventListener('click', () => {
+  document.getElementById('titleScreen').classList.remove('active');
+  document.getElementById('gameScreen').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if(!gameInitialized){
+    initGame();
+    gameInitialized = true;
+  }
+});
+
+document.getElementById('backToTitle').addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('gameScreen').classList.remove('active');
+  document.getElementById('titleScreen').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ================= ВКЛАДКИ ================= */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.target).classList.add('active');
+  });
+});
+
+/* ================= ЗАДАНИЕ 1: ВИКТОРИНА ================= */
+const QUIZ = [
+  { q:'Какая планета самая большая в Солнечной системе?',
+    a:['Марс','Юпитер','Венера'], c:'Юпитер',
+    f:'Юпитер больше Земли примерно в 11 раз!' },
+  { q:'Что изучает ботаника?',
+    a:['Животных','Растения','Звёзды'], c:'Растения',
+    f:'Слово «ботаника» происходит от греческого «ботанэ» — растение.' },
+  { q:'Сколько ног у паука?',
+    a:['6','8','10'], c:'8',
+    f:'У насекомых 6 ног, а у пауков — 8. Пауки не насекомые!' },
+  { q:'Какой газ растения поглощают при фотосинтезе?',
+    a:['Кислород','Углекислый газ','Азот'], c:'Углекислый газ',
+    f:'Растения «едят» углекислый газ, а выделяют кислород, которым мы дышим.' },
+  { q:'Как называется прибор для наблюдения за звёздами?',
+    a:['Микроскоп','Телескоп','Барометр'], c:'Телескоп',
+    f:'Микроскоп увеличивает мелкое, а телескоп приближает далёкое.' },
+  { q:'Что происходит с водой при температуре 0 °C?',
+    a:['Она закипает','Она превращается в лёд','С ней ничего не происходит'], c:'Она превращается в лёд',
+    f:'0 °C — температура замерзания воды, а 100 °C — кипения.' }
+];
+
+let qIdx = 0;
+let qCorrect = 0;
+let quizFinished = false;
+
+const qNumEl  = document.getElementById('qNum');
+const qTextEl = document.getElementById('qText');
+const optsEl  = document.getElementById('options');
+const fbEl    = document.getElementById('qFeedback');
+const nextBtn = document.getElementById('nextQ');
+const qScoreEl = document.getElementById('qScore');
+
+function renderQuestion(){
+  const q = QUIZ[qIdx];
+  qNumEl.textContent = `Вопрос ${qIdx + 1} из ${QUIZ.length}`;
+  qTextEl.textContent = q.q;
+  fbEl.textContent = '';
+  fbEl.className = 'feedback';
+  nextBtn.disabled = true;
+  nextBtn.textContent = (qIdx === QUIZ.length - 1) ? 'Показать результат 🏁' : 'Далее →';
+  optsEl.innerHTML = '';
+
+  shuffle([...q.a]).forEach(text => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.type = 'button';
+    b.textContent = text;
+    b.addEventListener('click', () => answerQuestion(b, text, q));
+    optsEl.appendChild(b);
+  });
+}
+
+function answerQuestion(btn, text, q){
+  [...optsEl.children].forEach(b => b.disabled = true);
+
+  if(text === q.c){
+    btn.classList.add('correct');
+    fbEl.textContent = '✅ Верно! ' + q.f;
+    fbEl.className = 'feedback good';
+    qCorrect++;
+    qScoreEl.textContent = '⭐ ' + qCorrect;
+    addStar(1);
+  } else {
+    btn.classList.add('wrong');
+    [...optsEl.children].forEach(b => {
+      if(b.textContent === q.c) b.classList.add('correct');
+    });
+    fbEl.textContent = '❌ Не совсем. Правильный ответ: ' + q.c + '. ' + q.f;
+    fbEl.className = 'feedback bad';
+  }
+  nextBtn.disabled = false;
+}
+
+nextBtn.addEventListener('click', () => {
+  if(quizFinished) return;
+  if(qIdx < QUIZ.length - 1){
+    qIdx++;
+    renderQuestion();
+  } else {
+    quizFinished = true;
+    optsEl.innerHTML = '';
+    qTextEl.textContent = '🏁 Викторина завершена!';
+    qNumEl.textContent = '';
+    fbEl.textContent = `Ты ответил правильно на ${qCorrect} из ${QUIZ.length} вопросов. Отличная работа!`;
+    fbEl.className = 'feedback good';
+    nextBtn.disabled = true;
+    nextBtn.textContent = 'Готово ✔';
+  }
+});
+
+/* ================= ЗАДАНИЕ 2: МЕМОРИ ================= */
+const MEM_EMOJI = ['🔭','🧪','⚗️','🧬','🪐','🌡️'];
+const memoryGrid = document.getElementById('memoryGrid');
+const pairsFoundEl = document.getElementById('pairsFound');
+
+let memFirst = null;
+let memLock = false;
+let memMatched = 0;
+
+function buildMemory(){
+  memFirst = null;
+  memLock = false;
+  memMatched = 0;
+  pairsFoundEl.textContent = '0';
+  memoryGrid.innerHTML = '';
+
+  shuffle([...MEM_EMOJI, ...MEM_EMOJI]).forEach(emoji => {
+    const card = document.createElement('button');
+    card.className = 'mem-card';
+    card.type = 'button';
+    card.dataset.emoji = emoji;
+    card.innerHTML =
+      '<span class="mem-inner">' +
+        '<span class="face front">?</span>' +
+        '<span class="face back">' + emoji + '</span>' +
+      '</span>';
+    card.addEventListener('click', () => flipCard(card));
+    memoryGrid.appendChild(card);
+  });
+}
+
+function flipCard(card){
+  if(memLock) return;
+  if(card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+  card.classList.add('flipped');
+
+  if(!memFirst){
+    memFirst = card;
+    return;
+  }
+
+  memLock = true;
+  const a = memFirst;
+  const b = card;
+
+  if(a.dataset.emoji === b.dataset.emoji){
+    setTimeout(() => {
+      a.classList.add('matched');
+      b.classList.add('matched');
+      memMatched++;
+      pairsFoundEl.textContent = memMatched;
+      addStar(1);
+      if(memMatched === MEM_EMOJI.length){
+        toast('Отлично! Все пары найдены 🎉', 'good');
+      }
+      memFirst = null;
+      memLock = false;
+    }, 380);
+  } else {
+    setTimeout(() => {
+      a.classList.remove('flipped');
+      b.classList.remove('flipped');
+      memFirst = null;
+      memLock = false;
+    }, 900);
+  }
+}
+
+document.getElementById('resetMemory').addEventListener('click', buildMemory);
+
+/* ================= ЗАДАНИЕ 3: СОРТИРОВКА ================= */
+const SORT_ITEMS = [
+  { e:'🌳', n:'Дерево',  t:'alive'    },
+  { e:'🐦', n:'Птица',   t:'alive'    },
+  { e:'🍄', n:'Гриб',    t:'alive'    },
+  { e:'🪨', n:'Камень',  t:'notalive' },
+  { e:'💧', n:'Вода',    t:'notalive' },
+  { e:'☁️', n:'Облако',  t:'notalive' }
+];
+
+const poolEl = document.getElementById('pool');
+let selectedChip = null;
+
+function buildSort(){
+  poolEl.innerHTML = '';
+  document.querySelectorAll('.bin-items').forEach(el => el.innerHTML = '');
+  selectedChip = null;
+
+  shuffle([...SORT_ITEMS]).forEach(item => {
+    const el = document.createElement('button');
+    el.className = 'chip';
+    el.type = 'button';
+    el.dataset.type = item.t;
+    el.innerHTML = '<span class="chip-emoji">' + item.e + '</span>' + item.n;
+    el.addEventListener('click', () => {
+      if(selectedChip === el){
+        el.classList.remove('selected');
+        selectedChip = null;
+        return;
+      }
+      if(selectedChip) selectedChip.classList.remove('selected');
+      selectedChip = el;
+      el.classList.add('selected');
+    });
+    poolEl.appendChild(el);
+  });
+}
+
+document.querySelectorAll('.bin').forEach(bin => {
+  bin.addEventListener('click', () => {
+    if(!selectedChip){
+      toast('Сначала выбери карточку вверху 👆');
+      return;
+    }
+    const chip = selectedChip;
+
+    if(chip.dataset.type === bin.dataset.bin){
+      chip.classList.remove('selected');
+      chip.disabled = true;
+      chip.classList.add('placed');
+      bin.querySelector('.bin-items').appendChild(chip);
+      selectedChip = null;
+      addStar(1);
+      if(!poolEl.querySelector('.chip')){
+        toast('Все объекты распределены! Ты различаешь живое и неживое 🎉', 'good');
+      }
+    } else {
+      chip.classList.add('shake');
+      setTimeout(() => chip.classList.remove('shake'), 500);
+      toast('Хм, это не сюда. Подумай ещё! 🤔', 'bad');
+    }
+  });
+});
+
+/* ================= ЗАДАНИЕ 4: ЛАБОРАТОРИЯ ЦВЕТА ================= */
+const MIXES = {
+  'red+yellow': { name:'Оранжевый', hex:'#f39c12', f:'Красный + жёлтый = оранжевый, как апельсин!' },
+  'blue+red'  : { name:'Фиолетовый', hex:'#8e44ad', f:'Красный + синий = фиолетовый, как баклажан!' },
+  'blue+yellow': { name:'Зелёный',   hex:'#27ae60', f:'Жёлтый + синий = зелёный, как трава!' }
+};
+
+let picked = [];
+let mixing = false;
+const foundMixes = new Set();
+const beakerEl = document.getElementById('beaker');
+const mixResultEl = document.getElementById('mixResult');
+
+document.querySelectorAll('.flask').forEach(flask => {
+  flask.addEventListener('click', () => {
+    if(mixing) return;
+    const color = flask.dataset.color;
+
+    if(flask.classList.contains('picked')){
+      flask.classList.remove('picked');
+      picked = picked.filter(c => c !== color);
+      return;
+    }
+    if(picked.length >= 2){
+      picked = [];
+      document.querySelectorAll('.flask.picked').forEach(f => f.classList.remove('picked'));
+    }
+    flask.classList.add('picked');
+    picked.push(color);
+
+    if(picked.length === 2) mixColors();
+  });
+});
+
+function mixColors(){
+  mixing = true;
+  const key = [...picked].sort().join('+');
+  const res = MIXES[key];
+
+  beakerEl.style.background = res.hex;
+  beakerEl.textContent = '';
+  beakerEl.classList.add('glow');
+  setTimeout(() => beakerEl.classList.remove('glow'), 800);
+
+  mixResultEl.innerHTML = '<strong>' + res.name + '!</strong> ' + res.f;
+
+  if(!foundMixes.has(key)){
+    foundMixes.add(key);
+    addStar(1);
+  }
+  if(foundMixes.size === Object.keys(MIXES).length){
+    setTimeout(() => toast('Ты открыл все три смеси! Настоящий химик 🎨', 'good'), 300);
+  }
+
+  picked = [];
+  setTimeout(() => {
+    document.querySelectorAll('.flask.picked').forEach(f => f.classList.remove('picked'));
+    mixing = false;
+  }, 700);
+}
+
+/* ================= ЗАДАНИЕ 5: ПЛАНЕТЫ ================= */
+const PLANETS = [
+  { name:'Меркурий', color:'#b8b8b8' },
+  { name:'Венера',   color:'#e8c07d' },
+  { name:'Земля',    color:'#4a90d9' },
+  { name:'Марс',     color:'#d1603d' }
+];
+
+let expected = 0;
+const solarEl = document.getElementById('solar');
+const orderListEl = document.getElementById('orderList');
+
+function buildSpace(){
+  expected = 0;
+  solarEl.innerHTML = '';
+  orderListEl.innerHTML = '';
+
+  shuffle([0, 1, 2, 3]).forEach(i => {
+    const p = PLANETS[i];
+    const btn = document.createElement('button');
+    btn.className = 'planet';
+    btn.type = 'button';
+    btn.innerHTML =
+      '<span class="planet-ball" style="--c:' + p.color + '"></span>' +
+      '<span>' + p.name + '</span>';
+    btn.addEventListener('click', () => pickPlanet(btn, i));
+    solarEl.appendChild(btn);
+  });
+}
+
+function pickPlanet(btn, i){
+  if(i === expected){
+    btn.classList.add('placed');
+    const chip = document.createElement('span');
+    chip.className = 'order-chip';
+    chip.textContent = (expected + 1) + '. ' + PLANETS[i].name;
+    orderListEl.appendChild(chip);
+    expected++;
+    addStar(1);
+    if(expected === PLANETS.length){
+      toast('Ура! Все планеты выстроены от Солнца 🚀', 'good');
+    }
+  } else {
+    btn.classList.add('shake');
+    setTimeout(() => btn.classList.remove('shake'), 500);
+    toast('Не спеши! Начни с самой близкой к Солнцу планеты 🌞', 'bad');
+  }
+}
+
+/* ================= ИНИЦИАЛИЗАЦИЯ ================= */
+document.getElementById('maxScore').textContent = MAX_STARS;
+
+function initGame(){
+  qIdx = 0;
+  qCorrect = 0;
+  quizFinished = false;
+  qScoreEl.textContent = '⭐ 0';
+  renderQuestion();
+  buildMemory();
+  buildSort();
+  buildSpace();
+}
+</script>
+</body>
+</html>
